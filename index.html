@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <title>Lista de Compras</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            height: auto;
+            background-image: url('imagem.jpg');
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            color: #ffffff;
+            overflow-y: auto;  
+            overflow-x: hidden; 
+        }
+
+        .container {
+            background:#00000082;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5), -5px -5px 15px rgba(255, 255, 255, 0.1);
+            max-width: 600px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2em;
+            color: #e0e0e0;
+            text-shadow: 2px 2px 5px rgba(255, 255, 255, 0.2);
+        }
+
+        p, label {
+            font-size: 1em;
+            color: #c0c0c0;
+            margin: 10px 0;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            width: 100%;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        input, select {
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        button {
+            background-color: #333333;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3), -3px -3px 10px rgba(255, 255, 255, 0.1);
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #444444;
+            box-shadow: inset 2px 2px 8px rgba(255, 255, 255, 0.1), inset -2px -2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: #00000082;
+            border-radius: 5px;
+        }
+
+        .item span {
+            margin-right: 10px;
+        }
+
+        #respLista {
+            max-height: 300px;
+            overflow-y: auto; 
+            margin-top: 20px;
+            padding: 10px;
+            background: #ffffff26;
+            border-radius: 5px;
+            box-shadow: inset 2px 2px 10px rgba(0, 0, 0, 0.3), inset -2px -2px 10px rgba(255, 255, 255, 0.1);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de Compras</h1>
+
+        <form id="formulario">
+            <div class="form-group">
+                <label for="item"><b>Item:</b></label>
+                <input type="text" id="item" name="item" required>
+            </div>
+
+            <div class="form-group">
+                <label for="valor"><b>Valor:</b></label>
+                <input type="number" id="valor" name="valor" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="quantidade"><b>Quantidade:</b></label>
+                <input type="number" id="quantidade" name="quantidade" value="1" min="1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="categoria"><b>Categoria:</b></label>
+                <select id="categoria" name="categoria" required>
+                    <option value="Alimentos">Alimentos</option>
+                    <option value="Bebidas">Bebidas</option>
+                    <option value="Proteínas">Proteínas</option>
+                    <option value="Frios">Frios</option>
+                    <option value="Frutas, Verduras e Legumes">Frutas, Verduras e Legumes</option>
+                    <option value="Higiene & Limpeza">Higiene & Limpeza</option>
+                </select>
+            </div>
+
+            <button type="submit"><b>Adicionar</b></button>
+        </form>
+
+        <div id="respLista"></div>
+        <p><strong><b>Total:</b></strong> R$ <span id="total">0.00</span></p>
+
+        <button id="limparLista"><b>Limpar Lista</b></button>
+        <button id="baixarCSV"><b>Baixar CSV</b></button>
+    </div>
+
+    <script>
+        const formulario = document.querySelector('#formulario');
+        const respLista = document.querySelector('#respLista');
+        const totalDisplay = document.querySelector('#total');
+        const limparListaBtn = document.querySelector('#limparLista');
+        const baixarCSVBtn = document.querySelector('#baixarCSV');
+
+        let listaDeCompras = JSON.parse(localStorage.getItem('listaDeCompras')) || [];
+        let total = listaDeCompras.reduce((sum, item) => sum + item.valor * item.quantidade, 0);
+
+        function atualizarExibicao() {
+            let categorias = {
+                'Alimentos': [],
+                'Bebidas': [],
+                'Proteínas': [],
+                'Frios': [],
+                'Frutas, Verduras e Legumes': [],
+                'Higiene & Limpeza': []
+            };
+
+            listaDeCompras.forEach(item => {
+                categorias[item.categoria].push(item);
+            });
+
+            let listaHTML = '';
+            for (let categoria in categorias) {
+                if (categorias[categoria].length > 0) {
+                    listaHTML += `<h3>${categoria}</h3>`;
+                    categorias[categoria].forEach((item, i) => {
+                        listaHTML += `
+                            <div class="item">
+                                <span>${item.nomeDoItem} (x${item.quantidade})</span>
+                                <span>R$ ${(item.valor * item.quantidade).toFixed(2)}</span>
+                                <button onclick="removerItem(${i})">Remover</button>
+                            </div>
+                        `;
+                    });
+                }
+            }
+
+            respLista.innerHTML = listaHTML;
+            totalDisplay.innerText = total.toFixed(2);
+            localStorage.setItem('listaDeCompras', JSON.stringify(listaDeCompras));
+        }
+
+        formulario.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const nomeDoItem = formulario.item.value;
+            const valor = parseFloat(formulario.valor.value);
+            const quantidade = parseInt(formulario.quantidade.value);
+            const categoria = formulario.categoria.value;
+
+            listaDeCompras.push({ nomeDoItem, valor, quantidade, categoria });
+            total += valor * quantidade;
+
+            atualizarExibicao();
+
+            formulario.item.value = '';
+            formulario.valor.value = '';
+            formulario.quantidade.value = 1;
+            formulario.categoria.value = 'Alimentos';
+            formulario.item.focus();
+        });
+
+        function removerItem(index) {
+            total -= listaDeCompras[index].valor * listaDeCompras[index].quantidade;
+            listaDeCompras.splice(index, 1);
+            atualizarExibicao();
+        }
+
+        limparListaBtn.addEventListener('click', () => {
+            listaDeCompras = [];
+            total = 0;
+            atualizarExibicao();
+        });
+
+        baixarCSVBtn.addEventListener('click', () => {
+            const csvContent = gerarCSV(listaDeCompras);
+            const link = document.createElement('a');
+            link.href = 'data:text/csv;charset=utf-8,' + encodeURI(csvContent);
+            link.download = 'lista_de_compras.csv';
+            link.click();
+        });
+
+        function gerarCSV(dados) {
+            let csv = 'Item,Valor,Quantidade,Categoria\n';
+            dados.forEach(item => {
+                csv += `${item.nomeDoItem},${item.valor.toFixed(2)},${item.quantidade},${item.categoria}\n`;
+            });
+            return csv;
+        }
+
+        atualizarExibicao();
+    </script>
+</body>
+</html>
