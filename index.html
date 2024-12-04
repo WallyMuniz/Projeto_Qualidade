@@ -145,10 +145,14 @@
       <label for="valor-unitario">Valor Unitário (R$):</label>
       <input type="number" id="valor-unitario" placeholder="Valor Unitário" onchange="calcularTotal()">
       
+      <label for="total">Total (R$):</label>
+      <input type="text" id="total" placeholder="Total do item" disabled>
+      
       <label for="data">Data:</label>
-      <input type="text" id="data" value="" disabled>
+      <input type="text" id="data" value="" oninput="validarData()" placeholder="DD/MM/AAAA">
       
       <button onclick="adicionarItem()">Adicionar Item</button>
+      <button onclick="limparOrcamento()">Limpar Orçamento</button>
     </div>
 
     <!-- Tabela de Orçamento -->
@@ -188,10 +192,24 @@
 
     // Função para calcular o total
     function calcularTotal() {
-      const quantidade = document.getElementById('quantidade').value;
-      const valorUnitario = document.getElementById('valor-unitario').value;
-      const total = quantidade * valorUnitario;
-      document.getElementById('total').value = total.toFixed(2);
+      const quantidade = parseFloat(document.getElementById('quantidade').value);
+      const valorUnitario = parseFloat(document.getElementById('valor-unitario').value);
+
+      if (!isNaN(quantidade) && !isNaN(valorUnitario) && quantidade > 0 && valorUnitario > 0) {
+        const total = (quantidade * valorUnitario).toFixed(2);
+        document.getElementById('total').value = total;
+      } else {
+        document.getElementById('total').value = '';
+      }
+    }
+
+    // Função para validar data
+    function validarData() {
+      const data = document.getElementById('data').value;
+      const regex = /^\d{2}\/\d{2}\/\d{4}$/;
+      if (!regex.test(data)) {
+        alert("Formato de data inválido. Use DD/MM/AAAA.");
+      }
     }
 
     // Função para adicionar um item à tabela
@@ -301,6 +319,13 @@
 
       // Salvando PDF
       doc.save('orcamento.pdf');
+    }
+
+    // Função para limpar o orçamento
+    function limparOrcamento() {
+      localStorage.removeItem('orcamento');
+      const tabela = document.getElementById('tabela-orcamento').getElementsByTagName('tbody')[0];
+      tabela.innerHTML = '';
     }
 
     // Carregar orçamento ao iniciar
