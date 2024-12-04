@@ -1,251 +1,316 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <title>Lista de Compras</title>
-    <style>
-        body {
-            margin: 0;
-            min-height: 100vh;
-            height: auto;
-            background-image: url('imagem.jpg');
-            background-size: cover;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: Arial, sans-serif;
-            color: #ffffff;
-            overflow-y: auto;  
-            overflow-x: hidden; 
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <title>BW Serviços</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: row;
+      min-height: 100vh;
+    }
+    .menu-lateral {
+      width: 200px;
+      background-color: #2c3e50;
+      color: white;
+      padding: 20px;
+      height: 100vh;
+      position: fixed;
+      box-sizing: border-box;
+    }
+    .menu-lateral a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      padding: 10px 0;
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+    .menu-lateral a:hover {
+      background-color: #34495e;
+      border-radius: 4px;
+    }
+    .conteudo {
+      margin-left: 220px;
+      padding: 20px;
+      flex-grow: 1;
+      box-sizing: border-box;
+    }
+    .conteudo h1 {
+      text-align: center;
+    }
+    .tabela-container {
+      width: 100%;
+      margin-top: 20px;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #2c3e50;
+      color: white;
+    }
+    td {
+      background-color: #ecf0f1;
+    }
+    input[type="number"], input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      margin-top: 10px;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    .formulario-container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
 
-        .container {
-            background:#00000082;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5), -5px -5px 15px rgba(255, 255, 255, 0.1);
-            max-width: 600px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        h1 {
-            font-size: 2em;
-            color: #e0e0e0;
-            text-shadow: 2px 2px 5px rgba(255, 255, 255, 0.2);
-        }
-
-        p, label {
-            font-size: 1em;
-            color: #c0c0c0;
-            margin: 10px 0;
-        }
-
-        label {
-            display: block;
-            text-align: left;
-            width: 100%;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        input, select {
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1em;
-        }
-
-        button {
-            background-color: #333333;
-            color: #ffffff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3), -3px -3px 10px rgba(255, 255, 255, 0.1);
-            transition: 0.3s;
-            margin-top: 10px;
-        }
-
-        button:hover {
-            background-color: #444444;
-            box-shadow: inset 2px 2px 8px rgba(255, 255, 255, 0.1), inset -2px -2px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 10px 0;
-            padding: 10px;
-            background: #00000082;
-            border-radius: 5px;
-        }
-
-        .item span {
-            margin-right: 10px;
-        }
-
-        #respLista {
-            max-height: 300px;
-            overflow-y: auto; 
-            margin-top: 20px;
-            padding: 10px;
-            background: #ffffff26;
-            border-radius: 5px;
-            box-shadow: inset 2px 2px 10px rgba(0, 0, 0, 0.3), inset -2px -2px 10px rgba(255, 255, 255, 0.1);
-        }
-
-    </style>
+    /* Responsividade */
+    @media (max-width: 768px) {
+      .menu-lateral {
+        width: 150px;
+      }
+      .conteudo {
+        margin-left: 160px;
+      }
+      table {
+        font-size: 12px;
+      }
+    }
+    @media (max-width: 480px) {
+      .menu-lateral {
+        width: 100px;
+      }
+      .conteudo {
+        margin-left: 110px;
+      }
+      table {
+        font-size: 10px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Lista de Compras</h1>
 
-        <form id="formulario">
-            <div class="form-group">
-                <label for="item"><b>Item:</b></label>
-                <input type="text" id="item" name="item" required>
-            </div>
+  <!-- Menu Lateral -->
+  <div class="menu-lateral">
+    <h2>Menu</h2>
+    <a href="#">Home</a>
+    <a href="#">Contato</a>
+    <a href="#">Serviços</a>
+    <a href="#">Agenda</a>
+    <a href="#">Orçamento</a>
+  </div>
 
-            <div class="form-group">
-                <label for="valor"><b>Valor:</b></label>
-                <input type="number" id="valor" name="valor" step="0.01" required>
-            </div>
+  <!-- Conteúdo Principal -->
+  <div class="conteudo">
+    <h1>Orçamento</h1>
 
-            <div class="form-group">
-                <label for="quantidade"><b>Quantidade:</b></label>
-                <input type="number" id="quantidade" name="quantidade" value="1" min="1" required>
-            </div>
-
-            <div class="form-group">
-                <label for="categoria"><b>Categoria:</b></label>
-                <select id="categoria" name="categoria" required>
-                    <option value="Alimentos">Alimentos</option>
-                    <option value="Bebidas">Bebidas</option>
-                    <option value="Proteínas">Proteínas</option>
-                    <option value="Frios">Frios</option>
-                    <option value="Frutas, Verduras e Legumes">Frutas, Verduras e Legumes</option>
-                    <option value="Higiene & Limpeza">Higiene & Limpeza</option>
-                </select>
-            </div>
-
-            <button type="submit"><b>Adicionar</b></button>
-        </form>
-
-        <div id="respLista"></div>
-        <p><strong><b>Total:</b></strong> R$ <span id="total">0.00</span></p>
-
-        <button id="limparLista"><b>Limpar Lista</b></button>
-        <button id="baixarCSV"><b>Baixar CSV</b></button>
+    <!-- Formulário de Adição de Item -->
+    <div class="formulario-container">
+      <label for="descricao">Descrição do Serviço:</label>
+      <input type="text" id="descricao" placeholder="Descrição do serviço">
+      
+      <label for="quantidade">Quantidade:</label>
+      <input type="number" id="quantidade" placeholder="Quantidade" onchange="calcularTotal()">
+      
+      <label for="valor-unitario">Valor Unitário (R$):</label>
+      <input type="number" id="valor-unitario" placeholder="Valor Unitário" onchange="calcularTotal()">
+      
+      <label for="data">Data:</label>
+      <input type="text" id="data" value="" disabled>
+      
+      <button onclick="adicionarItem()">Adicionar Item</button>
     </div>
 
-    <script>
-        const formulario = document.querySelector('#formulario');
-        const respLista = document.querySelector('#respLista');
-        const totalDisplay = document.querySelector('#total');
-        const limparListaBtn = document.querySelector('#limparLista');
-        const baixarCSVBtn = document.querySelector('#baixarCSV');
+    <!-- Tabela de Orçamento -->
+    <div class="tabela-container">
+      <table id="tabela-orcamento">
+        <thead>
+          <tr>
+            <th>Descrição do Serviço</th>
+            <th>Quantidade</th>
+            <th>Valor Unitário</th>
+            <th>Total</th>
+            <th>Data</th>
+            <th>Remover</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Linhas serão adicionadas aqui dinamicamente -->
+        </tbody>
+      </table>
+    </div>
 
-        let listaDeCompras = JSON.parse(localStorage.getItem('listaDeCompras')) || [];
-        let total = listaDeCompras.reduce((sum, item) => sum + item.valor * item.quantidade, 0);
+    <!-- Botão Gerar PDF -->
+    <div style="text-align: center;">
+      <button id="gerar-pdf" onclick="salvarPDF()">Gerar PDF</button>
+    </div>
+  </div>
 
-        function atualizarExibicao() {
-            let categorias = {
-                'Alimentos': [],
-                'Bebidas': [],
-                'Proteínas': [],
-                'Frios': [],
-                'Frutas, Verduras e Legumes': [],
-                'Higiene & Limpeza': []
-            };
+  <script>
+    // Função para obter a data atual no formato DD/MM/AAAA
+    function getDataAtual() {
+      const data = new Date();
+      const dia = ("0" + data.getDate()).slice(-2);
+      const mes = ("0" + (data.getMonth() + 1)).slice(-2);
+      const ano = data.getFullYear();
+      return `${dia}/${mes}/${ano}`;
+    }
 
-            listaDeCompras.forEach(item => {
-                categorias[item.categoria].push(item);
-            });
+    // Função para calcular o total
+    function calcularTotal() {
+      const quantidade = document.getElementById('quantidade').value;
+      const valorUnitario = document.getElementById('valor-unitario').value;
+      const total = quantidade * valorUnitario;
+      document.getElementById('total').value = total.toFixed(2);
+    }
 
-            let listaHTML = '';
-            for (let categoria in categorias) {
-                if (categorias[categoria].length > 0) {
-                    listaHTML += `<h3>${categoria}</h3>`;
-                    categorias[categoria].forEach((item, i) => {
-                        listaHTML += `
-                            <div class="item">
-                                <span>${item.nomeDoItem} (x${item.quantidade})</span>
-                                <span>R$ ${(item.valor * item.quantidade).toFixed(2)}</span>
-                                <button onclick="removerItem(${i})">Remover</button>
-                            </div>
-                        `;
-                    });
-                }
-            }
+    // Função para adicionar um item à tabela
+    function adicionarItem() {
+      const descricao = document.getElementById('descricao').value;
+      const quantidade = document.getElementById('quantidade').value;
+      const valorUnitario = document.getElementById('valor-unitario').value;
 
-            respLista.innerHTML = listaHTML;
-            totalDisplay.innerText = total.toFixed(2);
-            localStorage.setItem('listaDeCompras', JSON.stringify(listaDeCompras));
-        }
+      if (!descricao || !quantidade || !valorUnitario) {
+        alert('Por favor, preencha todos os campos.');
+        return;
+      }
 
-        formulario.addEventListener('submit', (e) => {
-            e.preventDefault();
+      if (quantidade <= 0 || valorUnitario <= 0) {
+        alert('A quantidade e o valor unitário devem ser maiores que zero.');
+        return;
+      }
 
-            const nomeDoItem = formulario.item.value;
-            const valor = parseFloat(formulario.valor.value);
-            const quantidade = parseInt(formulario.quantidade.value);
-            const categoria = formulario.categoria.value;
+      const data = getDataAtual();
+      const total = (quantidade * valorUnitario).toFixed(2);
+      
+      const tabela = document.getElementById('tabela-orcamento').getElementsByTagName('tbody')[0];
+      const novaLinha = tabela.insertRow();
+      
+      novaLinha.innerHTML = `
+        <td>${descricao}</td>
+        <td>${quantidade}</td>
+        <td>${parseFloat(valorUnitario).toFixed(2)}</td>
+        <td>${total}</td>
+        <td>${data}</td>
+        <td><button onclick="removerItem(this)">Remover</button></td>
+      `;
+      
+      // Limpar campos após adicionar
+      document.getElementById('descricao').value = '';
+      document.getElementById('quantidade').value = '';
+      document.getElementById('valor-unitario').value = '';
+      document.getElementById('data').value = data;
 
-            listaDeCompras.push({ nomeDoItem, valor, quantidade, categoria });
-            total += valor * quantidade;
+      // Salvar no localStorage
+      salvarOrcamento();
+    }
 
-            atualizarExibicao();
+    // Função para remover um item
+    function removerItem(btn) {
+      const linha = btn.parentElement.parentElement;
+      linha.remove();
 
-            formulario.item.value = '';
-            formulario.valor.value = '';
-            formulario.quantidade.value = 1;
-            formulario.categoria.value = 'Alimentos';
-            formulario.item.focus();
+      // Salvar no localStorage
+      salvarOrcamento();
+    }
+
+    // Função para salvar orçamento no localStorage
+    function salvarOrcamento() {
+      const tabela = document.getElementById('tabela-orcamento').getElementsByTagName('tbody')[0];
+      const itens = [];
+      
+      for (let i = 0; i < tabela.rows.length; i++) {
+        const cols = tabela.rows[i].cells;
+        itens.push({
+          descricao: cols[0].innerText,
+          quantidade: cols[1].innerText,
+          valorUnitario: cols[2].innerText,
+          total: cols[3].innerText,
+          data: cols[4].innerText
         });
+      }
+      localStorage.setItem('orcamento', JSON.stringify(itens));
+    }
 
-        function removerItem(index) {
-            total -= listaDeCompras[index].valor * listaDeCompras[index].quantidade;
-            listaDeCompras.splice(index, 1);
-            atualizarExibicao();
-        }
-
-        limparListaBtn.addEventListener('click', () => {
-            listaDeCompras = [];
-            total = 0;
-            atualizarExibicao();
+    // Função para carregar orçamento do localStorage
+    function carregarOrcamento() {
+      const orcamento = JSON.parse(localStorage.getItem('orcamento'));
+      if (orcamento) {
+        const tabela = document.getElementById('tabela-orcamento').getElementsByTagName('tbody')[0];
+        orcamento.forEach(item => {
+          const novaLinha = tabela.insertRow();
+          novaLinha.innerHTML = `
+            <td>${item.descricao}</td>
+            <td>${item.quantidade}</td>
+            <td>${item.valorUnitario}</td>
+            <td>${item.total}</td>
+            <td>${item.data}</td>
+            <td><button onclick="removerItem(this)">Remover</button></td>
+          `;
         });
+      }
+    }
 
-        baixarCSVBtn.addEventListener('click', () => {
-            const csvContent = gerarCSV(listaDeCompras);
-            const link = document.createElement('a');
-            link.href = 'data:text/csv;charset=utf-8,' + encodeURI(csvContent);
-            link.download = 'lista_de_compras.csv';
-            link.click();
-        });
+    // Função para gerar PDF do orçamento
+    function salvarPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
 
-        function gerarCSV(dados) {
-            let csv = 'Item,Valor,Quantidade,Categoria\n';
-            dados.forEach(item => {
-                csv += `${item.nomeDoItem},${item.valor.toFixed(2)},${item.quantidade},${item.categoria}\n`;
-            });
-            return csv;
-        }
+      // Adicionando Cabeçalho
+      doc.setFontSize(16);
+      doc.text("Orçamento - Empresa XYZ", 20, 20);
 
-        atualizarExibicao();
-    </script>
+      // Adicionando Tabela
+      const tabela = document.getElementById('tabela-orcamento');
+      doc.autoTable({ html: tabela, startY: 30, styles: { fontSize: 10, cellPadding: 5, font: 'helvetica' } });
+
+      // Adicionando Rodapé
+      const dataAtual = new Date().toLocaleDateString();
+      doc.setFontSize(10);
+      doc.text(`Data: ${dataAtual}`, 20, doc.internal.pageSize.height - 20);
+
+      // Salvando PDF
+      doc.save('orcamento.pdf');
+    }
+
+    // Carregar orçamento ao iniciar
+    window.onload = function() {
+      carregarOrcamento();
+    }
+  </script>
+
+  <!-- Adicionando a biblioteca jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.6.0/jspdf.umd.min.js"></script>
+
 </body>
 </html>
