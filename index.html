@@ -259,15 +259,30 @@
   <script>
     // Função para calcular o total do item
     function calcularTotal() {
-      const quantidade = parseFloat(document.getElementById('quantidade').value);
-      const valorUnitario = parseFloat(document.getElementById('valor-unitario').value);
+      let quantidade = parseFloat(document.getElementById('quantidade').value);
+      let valorUnitario = parseFloat(document.getElementById('valor-unitario').value);
+
+      // Formata a Quantidade e o Valor Unitário para duas casas decimais
+      if (!isNaN(quantidade)) {
+        quantidade = quantidade.toFixed(2); // Formata para 2 casas decimais
+        document.getElementById('quantidade').value = quantidade; // Atualiza o campo de Quantidade
+      }
+
+      if (!isNaN(valorUnitario)) {
+        valorUnitario = valorUnitario.toFixed(2); // Formata para 2 casas decimais
+        document.getElementById('valor-unitario').value = valorUnitario; // Atualiza o campo de Valor Unitário
+      }
+
+      // Verifica se os valores são válidos e maior que 0
       if (!isNaN(quantidade) && !isNaN(valorUnitario) && quantidade > 0 && valorUnitario > 0) {
+        // Calcula o total e garante duas casas decimais
         const total = (quantidade * valorUnitario).toFixed(2);
-        document.getElementById('total').value = total;
+        document.getElementById('total').value = total; // Atualiza o campo de Total
       } else {
-        document.getElementById('total').value = '';
+        document.getElementById('total').value = ''; // Limpa o campo Total se os valores forem inválidos
       }
     }
+
 
     // Função para validar o formato da data
     function validarData() {
@@ -304,9 +319,9 @@
 
       // Adiciona as barras automaticamente
       if (valor.length > 2 && valor.length <= 4) {
-        valor = valor.slice(0, 2) + '/' + valor.slice(2);
+        valor = valor.slice(0, 2) + '-' + valor.slice(2);
       } else if (valor.length > 4) {
-        valor = valor.slice(0, 2) + '/' + valor.slice(2, 4) + '/' + valor.slice(4, 8);
+        valor = valor.slice(0, 2) + '-' + valor.slice(2, 4) + '-' + valor.slice(4, 8);
       }
 
       // Atualiza o valor do input com a formatação correta
