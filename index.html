@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <title>BW Serviços</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -249,28 +250,14 @@
       </table>
     </div>
 
-    <!-- Botão Gerar PDF -->
+    <!-- Botão Enviar para Planilha do Google Sheets -->
     <div style="text-align: center;">
-      <button id="gerar-pdf" onclick="salvarPDF()">Gerar PDF</button>
+      <button id="enviar-planilha" onclick="enviarParaPlanilha()">Enviar para Planilha</button>
     </div>
   </div>
 
   <script>
-    // Função para alternar o menu (quando clicado no ícone hambúrguer)
-    function toggleMenu() {
-      const nav = document.querySelector('nav');
-      nav.classList.toggle('show');
-    }
-
-    // Funções para cálculo do orçamento (mesmas do seu código original)
-    function getDataAtual() {
-      const data = new Date();
-      const dia = ("0" + data.getDate()).slice(-2);
-      const mes = ("0" + (data.getMonth() + 1)).slice(-2);
-      const ano = data.getFullYear();
-      return `${dia}/${mes}/${ano}`;
-    }
-
+    // Função para calcular o total do item
     function calcularTotal() {
       const quantidade = parseFloat(document.getElementById('quantidade').value);
       const valorUnitario = parseFloat(document.getElementById('valor-unitario').value);
@@ -282,65 +269,183 @@
       }
     }
 
+    // Função para validar o formato da data
     function validarData() {
       const data = document.getElementById('data').value;
       const regex = /^\d{2}\/\d{2}\/\d{4}$/;
+
+      // Verifica se o formato da data está correto
       if (!regex.test(data)) {
-        alert("Formato de data inválido. Use DD/MM/AAAA.");
+        return false;  // Retorna false se o formato for inválido
       }
+
+      // Verifica se a data é válida (ex: 31/02/2024 não deve ser permitida)
+      const partes = data.split('/');
+      const dia = parseInt(partes[0], 10);
+      const mes = parseInt(partes[1], 10) - 1; // Meses começam do índice 0
+      const ano = parseInt(partes[2], 10);
+
+      const dataObj = new Date(ano, mes, dia);
+      
+      // Verifica se a data gerada é válida
+      if (dataObj.getDate() !== dia || dataObj.getMonth() !== mes || dataObj.getFullYear() !== ano) {
+        return false;  // Retorna false se a data for inválida
+      }
+
+      return true;  // Retorna true se tudo estiver correto
     }
 
+    // Função para formatar a data com barras enquanto o usuário digita
+    function formatarData(event) {
+      let valor = event.target.value;
+      
+      // Remove tudo que não for número
+      valor = valor.replace(/\D/g, '');
+
+      // Adiciona as barras automaticamente
+      if (valor.length > 2 && valor.length <= 4) {
+        valor = valor.slice(0, 2) + '/' + valor.slice(2);
+      } else if (valor.length > 4) {
+        valor = valor.slice(0, 2) + '/' + valor.slice(2, 4) + '/' + valor.slice(4, 8);
+      }
+
+      // Atualiza o valor do input com a formatação correta
+      event.target.value = valor;
+    }
+
+    // Adiciona o evento de input ao campo de data
+    document.getElementById('data').addEventListener('input', formatarData);
+
+
+    // Carregar os itens salvos ao carregar a página
+    document.addEventListener('DOMContentLoaded', function() {
+      exibirItens();
+    });
+
+    // Função para adicionar um item ao localStorage e à tabela
     function adicionarItem() {
       const descricao = document.getElementById('descricao').value;
       const quantidade = document.getElementById('quantidade').value;
       const valorUnitario = document.getElementById('valor-unitario').value;
-      const total = (quantidade * valorUnitario).toFixed(2);
-      const data = getDataAtual();
+      const total = document.getElementById('total').value;
+      const data = document.getElementById('data').value;
 
-      if (!descricao || !quantidade || !valorUnitario) {
-        alert('Preencha todos os campos!');
-        return;
+      // Verificar se todos os campos estão preenchidos
+      if (!descricao || !quantidade || !valorUnitario || !total || !data) {
+        alert("Por favor, preencha todos os campos do formulário.");
+        return;  // Impede a adição se algum campo estiver vazio
       }
 
+      // Gerar um ID único (pode ser substituído por um algoritmo mais robusto)
+      const id = Date.now();  // ID único baseado no timestamp
+
+      const novoItem = { id, descricao, quantidade, valorUnitario, total, data };
+
+      // Recuperar os itens já existentes no localStorage, ou um array vazio se não houver
+      let itens = JSON.parse(localStorage.getItem('orcamentoItems')) || [];
+
+      // Adicionar o novo item ao array
+      itens.push(novoItem);
+
+      // Salvar o array de itens no localStorage
+      localStorage.setItem('orcamentoItems', JSON.stringify(itens));
+
+      // Exibir os itens na tabela
+      exibirItens();
+
+      // Limpar os campos do formulário após adicionar
+      limparCampos();
+    }
+
+
+    // Função para exibir os itens na tabela
+    function exibirItens() {
       const tabela = document.getElementById('tabela-orcamento').getElementsByTagName('tbody')[0];
-      const novaLinha = tabela.insertRow();
-      novaLinha.innerHTML = `
-        <td>${descricao}</td>
-        <td>${quantidade}</td>
-        <td>${valorUnitario}</td>
-        <td>${total}</td>
-        <td>${data}</td>
-        <td><button onclick="removerItem(this)">Remover</button></td>
-      `;
+      tabela.innerHTML = ''; // Limpa a tabela
+      let itens = JSON.parse(localStorage.getItem('orcamentoItems')) || [];
+      
+      itens.forEach(item => {
+        const novaLinha = tabela.insertRow();
+        novaLinha.innerHTML = `
+          <td>${item.descricao}</td>
+          <td>${item.quantidade}</td>
+          <td>${item.valorUnitario}</td>
+          <td>${item.total}</td>
+          <td>${item.data}</td>
+          <td><button onclick="removerItem(${item.id})">Remover</button></td>
+        `;
+      });
     }
 
-    function removerItem(btn) {
-      const linha = btn.parentElement.parentElement;
-      linha.remove();
+    // Função para remover um item da tabela e do localStorage
+    function removerItem(id) {
+      let itens = JSON.parse(localStorage.getItem('orcamentoItems')) || [];
+      itens = itens.filter(item => item.id !== id);  // Remove o item pelo ID único
+      localStorage.setItem('orcamentoItems', JSON.stringify(itens));
+      
+      exibirItens();
+}
+    // Função para limpar os campos do formulário
+    function limparCampos() {
+      document.getElementById('descricao').value = '';
+      document.getElementById('quantidade').value = '';
+      document.getElementById('valor-unitario').value = '';
+      document.getElementById('total').value = '';
+      document.getElementById('data').value = '';
     }
 
-    // Carregar orçamento
-    window.onload = function() {
-      carregarOrcamento();
+    // Função para limpar o orçamento completo
+    function limparOrcamento() {
+      localStorage.removeItem('orcamentoItems');
+      exibirItens();
     }
 
-    function carregarOrcamento() {
-      const orcamento = JSON.parse(localStorage.getItem('orcamento'));
-      if (orcamento) {
+    // Função para enviar os dados para o Google Apps Script (Planilha)
+    function enviarParaPlanilha() {
         const tabela = document.getElementById('tabela-orcamento').getElementsByTagName('tbody')[0];
-        orcamento.forEach(item => {
-          const novaLinha = tabela.insertRow();
-          novaLinha.innerHTML = `
-            <td>${item.descricao}</td>
-            <td>${item.quantidade}</td>
-            <td>${item.valorUnitario}</td>
-            <td>${item.total}</td>
-            <td>${item.data}</td>
-            <td><button onclick="removerItem(this)">Remover</button></td>
-          `;
-        });
-      }
+        const rows = tabela.rows;
+        
+        if (rows.length === 0) {
+            alert("Não há itens para enviar.");
+            return;
+        }
+    
+    const dados = [];
+    for (let i = 0; i < rows.length; i++) {
+        const cols = rows[i].cells;
+        const item = {
+            descricao: cols[0].innerText.trim(),  // Garantir que não haja espaços extras
+            quantidade: parseFloat(cols[1].innerText.replace(',', '.')),  // Convertendo para número
+            valorUnitario: parseFloat(cols[2].innerText.replace(',', '.')),  // Convertendo para número
+            total: parseFloat(cols[3].innerText.replace(',', '.')),  // Convertendo para número
+            data: cols[4].innerText.trim()  // Garantir que não haja espaços extras
+        };
+        dados.push(item);
     }
+
+    // Verificando os dados antes de enviar
+    console.log("Dados a serem enviados: ", JSON.stringify(dados));
+
+    // Envia os dados via POST para o Google Apps Script
+    fetch('https://script.google.com/macros/s/AKfycbxnCTw8V4-ZJe8d5wA-SBf8TbPbAToBgq2GLIQwIJOs490q2KBWU8WOVFFZTXwQ5gBOuA/exec', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)  // Verifique se os dados estão no formato correto
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        alert("Orçamento enviado com sucesso!");
+      } else {
+        alert("Erro ao enviar: " + data.message);
+      }
+    })
+    .catch(error => {
+      alert("Erro ao enviar os dados. Tente novamente.");
+      console.error(error);
+    });
+}
+
   </script>
 
 </body>
