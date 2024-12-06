@@ -7,128 +7,200 @@
   <title>BW Serviços</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
-      display: flex;
-      flex-direction: row;
-      min-height: 100vh;
+      background-color: #f4f4f4;
     }
-    .menu-lateral {
-      width: 200px;
-      background-color: #2c3e50;
+
+    /* Estilo para o Cabeçalho (Menu no topo) */
+    header {
+      background-color: #1e1e1e;
       color: white;
-      padding: 20px;
-      height: 100vh;
-      position: fixed;
-      box-sizing: border-box;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    .menu-lateral a {
-      display: block;
+
+    header h1 {
+      font-size: 22px;
+    }
+
+    /* Menu de Navegação Horizontal */
+    nav {
+      display: flex;
+      gap: 20px;
+    }
+
+    nav a {
       color: white;
       text-decoration: none;
-      padding: 10px 0;
-      font-size: 18px;
-      margin-bottom: 8px;
+      padding: 12px 20px;
+      font-size: 16px;
+      transition: background-color 0.3s;
     }
-    .menu-lateral a:hover {
-      background-color: #34495e;
+
+    nav a:hover {
+      background-color: #333;
       border-radius: 4px;
     }
+
+    /* Menu Hamburger para dispositivos móveis */
+    .menu-hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      gap: 5px;
+    }
+
+    .menu-hamburger div {
+      width: 30px;
+      height: 3px;
+      background-color: white;
+    }
+
+    /* Estilo para o conteúdo principal */
     .conteudo {
-      margin-left: 220px;
       padding: 20px;
       flex-grow: 1;
       box-sizing: border-box;
     }
-    .conteudo h1 {
-      text-align: center;
+
+    /* Formulário de Orçamento */
+    .formulario-container {
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
     }
-    .tabela-container {
+
+    .formulario-container label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .formulario-container input {
       width: 100%;
-      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+    }
+
+    .formulario-container button {
+      background-color: #0078d4;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .formulario-container button:hover {
+      background-color: #005a8d;
+    }
+
+    /* Tabela de Orçamento */
+    .tabela-container {
       overflow-x: auto;
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
+      margin-top: 20px;
       border-radius: 8px;
       overflow: hidden;
+      background-color: white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
+
     th, td {
-      border: 1px solid #ddd;
       padding: 10px;
       text-align: center;
+      border: 1px solid #ddd;
     }
+
     th {
-      background-color: #2c3e50;
+      background-color: #0078d4;
       color: white;
     }
+
     td {
-      background-color: #ecf0f1;
+      background-color: #f9f9f9;
     }
-    input[type="number"], input[type="text"] {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      margin-bottom: 10px;
-      box-sizing: border-box;
-    }
+
     button {
-      background-color: #3498db;
+      background-color: #ff5c5c;
       color: white;
       border: none;
-      padding: 10px;
+      padding: 5px 10px;
       cursor: pointer;
-      margin-top: 10px;
       border-radius: 4px;
-      transition: background-color 0.3s ease;
     }
+
     button:hover {
-      background-color: #2980b9;
-    }
-    .formulario-container {
-      max-width: 600px;
-      margin: 0 auto;
+      background-color: #e04a4a;
     }
 
     /* Responsividade */
     @media (max-width: 768px) {
-      .menu-lateral {
-        width: 150px;
+      .menu-hamburger {
+        display: flex;
       }
-      .conteudo {
-        margin-left: 160px;
+
+      nav {
+        display: none;
       }
-      table {
-        font-size: 12px;
+
+      nav.show {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        right: 0;
+        background-color: #1e1e1e;
+        padding: 10px;
+        width: 200px;
+        z-index: 50;
       }
-    }
-    @media (max-width: 480px) {
-      .menu-lateral {
-        width: 100px;
-      }
-      .conteudo {
-        margin-left: 110px;
-      }
-      table {
-        font-size: 10px;
+
+      nav a {
+        text-align: center;
+        padding: 15px 0;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- Menu Lateral -->
-  <div class="menu-lateral">
-    <h2>Menu</h2>
-    <a href="#">Home</a>
-    <a href="#">Contato</a>
-    <a href="#">Serviços</a>
-    <a href="#">Agenda</a>
-    <a href="#">Orçamento</a>
-  </div>
+  <!-- Cabeçalho com Menu -->
+  <header>
+    <h1>BW Serviços</h1>
+    <!-- Menu de Navegação -->
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Contato</a>
+      <a href="#">Serviços</a>
+      <a href="#">Agenda</a>
+      <a href="#">Orçamento</a>
+    </nav>
+
+    <!-- Botão Hamburger -->
+    <div class="menu-hamburger" onclick="toggleMenu()">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </header>
 
   <!-- Conteúdo Principal -->
   <div class="conteudo">
@@ -136,6 +208,9 @@
 
     <!-- Formulário de Adição de Item -->
     <div class="formulario-container">
+      <label for="cliente">Cliente:</label>
+      <input type="text" id="cliente" placeholder="Cliente">
+
       <label for="descricao">Descrição do Serviço:</label>
       <input type="text" id="descricao" placeholder="Descrição do serviço">
       
@@ -160,7 +235,7 @@
       <table id="tabela-orcamento">
         <thead>
           <tr>
-            <th>Descrição do Serviço</th>
+            <th>Descrição</th>
             <th>Quantidade</th>
             <th>Valor Unitário</th>
             <th>Total</th>
@@ -181,7 +256,13 @@
   </div>
 
   <script>
-    // Função para obter a data atual no formato DD/MM/AAAA
+    // Função para alternar o menu (quando clicado no ícone hambúrguer)
+    function toggleMenu() {
+      const nav = document.querySelector('nav');
+      nav.classList.toggle('show');
+    }
+
+    // Funções para cálculo do orçamento (mesmas do seu código original)
     function getDataAtual() {
       const data = new Date();
       const dia = ("0" + data.getDate()).slice(-2);
@@ -190,11 +271,9 @@
       return `${dia}/${mes}/${ano}`;
     }
 
-    // Função para calcular o total
     function calcularTotal() {
       const quantidade = parseFloat(document.getElementById('quantidade').value);
       const valorUnitario = parseFloat(document.getElementById('valor-unitario').value);
-
       if (!isNaN(quantidade) && !isNaN(valorUnitario) && quantidade > 0 && valorUnitario > 0) {
         const total = (quantidade * valorUnitario).toFixed(2);
         document.getElementById('total').value = total;
@@ -203,7 +282,6 @@
       }
     }
 
-    // Função para validar data
     function validarData() {
       const data = document.getElementById('data').value;
       const regex = /^\d{2}\/\d{2}\/\d{4}$/;
@@ -212,75 +290,40 @@
       }
     }
 
-    // Função para adicionar um item à tabela
     function adicionarItem() {
       const descricao = document.getElementById('descricao').value;
       const quantidade = document.getElementById('quantidade').value;
       const valorUnitario = document.getElementById('valor-unitario').value;
+      const total = (quantidade * valorUnitario).toFixed(2);
+      const data = getDataAtual();
 
       if (!descricao || !quantidade || !valorUnitario) {
-        alert('Por favor, preencha todos os campos.');
+        alert('Preencha todos os campos!');
         return;
       }
 
-      if (quantidade <= 0 || valorUnitario <= 0) {
-        alert('A quantidade e o valor unitário devem ser maiores que zero.');
-        return;
-      }
-
-      const data = getDataAtual();
-      const total = (quantidade * valorUnitario).toFixed(2);
-      
       const tabela = document.getElementById('tabela-orcamento').getElementsByTagName('tbody')[0];
       const novaLinha = tabela.insertRow();
-      
       novaLinha.innerHTML = `
         <td>${descricao}</td>
         <td>${quantidade}</td>
-        <td>${parseFloat(valorUnitario).toFixed(2)}</td>
+        <td>${valorUnitario}</td>
         <td>${total}</td>
         <td>${data}</td>
         <td><button onclick="removerItem(this)">Remover</button></td>
       `;
-      
-      // Limpar campos após adicionar
-      document.getElementById('descricao').value = '';
-      document.getElementById('quantidade').value = '';
-      document.getElementById('valor-unitario').value = '';
-      document.getElementById('data').value = data;
-
-      // Salvar no localStorage
-      salvarOrcamento();
     }
 
-    // Função para remover um item
     function removerItem(btn) {
       const linha = btn.parentElement.parentElement;
       linha.remove();
-
-      // Salvar no localStorage
-      salvarOrcamento();
     }
 
-    // Função para salvar orçamento no localStorage
-    function salvarOrcamento() {
-      const tabela = document.getElementById('tabela-orcamento').getElementsByTagName('tbody')[0];
-      const itens = [];
-      
-      for (let i = 0; i < tabela.rows.length; i++) {
-        const cols = tabela.rows[i].cells;
-        itens.push({
-          descricao: cols[0].innerText,
-          quantidade: cols[1].innerText,
-          valorUnitario: cols[2].innerText,
-          total: cols[3].innerText,
-          data: cols[4].innerText
-        });
-      }
-      localStorage.setItem('orcamento', JSON.stringify(itens));
+    // Carregar orçamento
+    window.onload = function() {
+      carregarOrcamento();
     }
 
-    // Função para carregar orçamento do localStorage
     function carregarOrcamento() {
       const orcamento = JSON.parse(localStorage.getItem('orcamento'));
       if (orcamento) {
@@ -298,44 +341,7 @@
         });
       }
     }
-
-    // Função para gerar PDF do orçamento
-    function salvarPDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-
-      // Adicionando Cabeçalho
-      doc.setFontSize(16);
-      doc.text("Orçamento - Empresa XYZ", 20, 20);
-
-      // Adicionando Tabela
-      const tabela = document.getElementById('tabela-orcamento');
-      doc.autoTable({ html: tabela, startY: 30, styles: { fontSize: 10, cellPadding: 5, font: 'helvetica' } });
-
-      // Adicionando Rodapé
-      const dataAtual = new Date().toLocaleDateString();
-      doc.setFontSize(10);
-      doc.text(`Data: ${dataAtual}`, 20, doc.internal.pageSize.height - 20);
-
-      // Salvando PDF
-      doc.save('orcamento.pdf');
-    }
-
-    // Função para limpar o orçamento
-    function limparOrcamento() {
-      localStorage.removeItem('orcamento');
-      const tabela = document.getElementById('tabela-orcamento').getElementsByTagName('tbody')[0];
-      tabela.innerHTML = '';
-    }
-
-    // Carregar orçamento ao iniciar
-    window.onload = function() {
-      carregarOrcamento();
-    }
   </script>
-
-  <!-- Adicionando a biblioteca jsPDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.6.0/jspdf.umd.min.js"></script>
 
 </body>
 </html>
